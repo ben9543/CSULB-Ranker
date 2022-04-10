@@ -3,6 +3,7 @@ import { app } from "../firebase";
 import { Link } from "react-router-dom";
 import {useNavigate} from "react-router-dom";
 import { getAuth, signOut } from "firebase/auth";
+import { toast } from "react-toastify";
 // Initialize Firebase Authentication and get a reference to the service
 const auth = getAuth(app);
 
@@ -36,7 +37,10 @@ const Nav = ({loggedIn}) => {
                     :
                 // Sign Out
                 <ul className="flex px-4">
-                    <li className="cursor-pointer" onClick={()=>signOut(auth).then(()=>navigate("/"))}><p>Sign Out</p></li>
+                    <li className="cursor-pointer" onClick={()=>{
+                        signOut(auth).then(()=>navigate("/"));
+                        toast.error("Signed out")
+                    }}><p>Sign Out</p></li>
                 </ul>
             }
         </div>

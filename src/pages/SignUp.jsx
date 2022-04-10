@@ -27,7 +27,8 @@ const SignUp = ({loggedIn}) => {
                             uid:user.uid,
                             email,
                             username,
-                            votes:[]
+                            upVotes:[],
+                            downVotes:[]
                         })
                         navigate("/");
                     }

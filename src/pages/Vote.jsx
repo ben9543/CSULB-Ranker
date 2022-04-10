@@ -7,33 +7,33 @@ import { getAuth } from "firebase/auth";
 import { toast } from "react-toastify";
 const auth = getAuth(app);
 
-const Card = ({postId, bigHeading, smallHeading, upVotes, downVotes, handleUp, handleDown, userUpVotes, userDownVotes}) => {
-    const [upVoteCount, setUpVoteCount] = useState();
-    const [downVoteCount, setDownVoteCount] = useState();
+const Card = ({postId, bigHeading, upVotes, downVotes, handleUp, handleDown, userUpVotes, userDownVotes}) => {
+    const [upVoteCount, setUpVoteCount] = useState(upVotes);
+    const [downVoteCount, setDownVoteCount] = useState(downVotes);
     const [isUpVoted, setIsUpVoted] = useState(false);
     const [isDownVoted, setIsDownVoted] = useState(false);
-    console.log(isDownVoted)
     useEffect(()=>{
-        setUpVoteCount(upVotes);
-        setDownVoteCount(downVotes);
-        console.log(userUpVotes, userDownVotes)
-        if (userUpVotes.includes(postId))setIsUpVoted(true);
-        if(userDownVotes.includes(postId))setIsDownVoted(true);
-    },[userUpVotes, userDownVotes])
+
+        if (userUpVotes !== null && userUpVotes !== undefined){
+            if(userUpVotes.includes(postId))setIsUpVoted(true);
+        }
+        if (userDownVotes !== null && userDownVotes !== undefined){
+            if(userDownVotes.includes(postId))setIsDownVoted(true);
+        }
+    },[upVoteCount,downVoteCount, isUpVoted, isDownVoted])
     return(
         <div className={`overflow-hidden ${CARD_CLASS}`}>
             <div id="heading-container" className="border-r overflow-scroll">
-                <h1 className="text-xl font-semibold">{bigHeading}</h1>
-                <h3 className="text-md font-thin">{smallHeading}</h3>
+                <h1 className="text-xl font-semibold break-all">{bigHeading}</h1>
             </div>
             <div id="botton-container" className="border-l flex items-center justify-center">
-                <div id="up" className={`cursor-pointer hover:bg-green-400 ${isUpVoted ? "bg-green-400" : null} w-full h-full flex items-center justify-center`} onClick={()=>handleUp(postId, upVoteCount, downVoteCount, setUpVoteCount, setDownVoteCount)}>
+                <div id="up" className={`cursor-pointer hover:bg-green-400 ${isUpVoted ? "bg-green-400" : null} w-full h-full flex items-center justify-center`} onClick={()=>handleUp({postId, upVoteCount, downVoteCount, setUpVoteCount, setDownVoteCount, setIsUpVoted, setIsDownVoted})}>
                     <div style={{transform:"translateY(10%)"}} className="flex flex-col justify-center items-center">
                         <CaretUpFill size="40"/>
                         <p>{upVoteCount}</p>
                     </div>
                 </div>
-                <div id="down" className={`cursor-pointer hover:bg-red-400 ${isDownVoted ? "bg-red-400" : null} w-full h-full flex items-center justify-center`} onClick={()=>handleDown(postId, upVoteCount, downVoteCount, setUpVoteCount, setDownVoteCount)}>
+                <div id="down" className={`cursor-pointer hover:bg-red-400 ${isDownVoted ? "bg-red-400" : null} w-full h-full flex items-center justify-center`} onClick={()=>handleDown({postId, upVoteCount, downVoteCount, setUpVoteCount, setDownVoteCount, setIsUpVoted, setIsDownVoted})}>
                     <div style={{transform:"translateY(10%)"}} className="flex flex-col justify-center items-center">
                         <CaretDownFill size="40"/>
                         <p>{downVoteCount}</p>
@@ -52,8 +52,9 @@ const Vote = ({loggedIn}) => {
     const [userDownVotes, setUserDownVotes] = useState([]);
 
     useEffect(()=>{
-        if (!loggedIn) navigate("/", {replace:true});
+        if (!loggedIn) navigate("/login", {replace:true});
     },[]);
+
     useEffect(()=>{
         async function readData(){
             const userData = await readDocument("user");
@@ -87,7 +88,7 @@ const Vote = ({loggedIn}) => {
     // 3. Find the correct user data
     // 4. If the post id is in user.votes
     
-    const handleUp = async(postId, upVotes, setUpVoteCount) => {
+    const handleUp = async({postId, upVoteCount, downVoteCount, setUpVoteCount, setDownVoteCount, setIsUpVoted, setIsDownVoted}) => {
         let tempArr = [];
         if (userUpVotes.includes(postId) || userDownVotes.includes(postId)){
             return toast.error("You have already voted.")
@@ -95,12 +96,13 @@ const Vote = ({loggedIn}) => {
         tempArr = userUpVotes;
         tempArr.push(postId);
         setUserUpVotes(tempArr);
-        updateDocument("post", postId, {upVotes: upVotes+1});
+        updateDocument("post", postId, {upVotes: upVoteCount+1});
         updateDocument("user", docUserId, {upVotes:userUpVotes});
-        setUpVoteCount(upVotes+1);
+        setUpVoteCount(upVoteCount+1);
+        setIsUpVoted(true);
     
     }
-    const handleDown = async(postId, downVotes, setDownVoteCount) => {
+    const handleDown = async({postId, upVoteCount, downVoteCount, setUpVoteCount, setDownVoteCount, setIsUpVoted, setIsDownVoted}) => {
         let tempArr;
         if (userDownVotes.includes(postId) || userUpVotes.includes(postId)){
             return toast.error("You have already voted.")
@@ -108,9 +110,10 @@ const Vote = ({loggedIn}) => {
         tempArr = userDownVotes;
         tempArr.push(postId);
         setUserDownVotes(tempArr);
-        updateDocument("post", postId, {downVotes: downVotes+1});
+        updateDocument("post", postId, {downVotes: downVoteCount+1});
         updateDocument("user", docUserId, {downVotes:userDownVotes});
-        setDownVoteCount(downVotes+1);
+        setDownVoteCount(downVoteCount+1);
+        setIsDownVoted(true);
     }
     return(
         <>
@@ -122,8 +125,6 @@ const Vote = ({loggedIn}) => {
                         key={k} 
                         postId={v.id}
                         bigHeading={v.bigHeading} 
-                        smallHeading={v.smallHeading} 
-                        content={v.content}
                         upVotes={v.upVotes}
                         downVotes={v.downVotes}
                         handleUp={handleUp}
