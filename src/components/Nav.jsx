@@ -21,7 +21,7 @@ const Nav = ({loggedIn}) => {
                     {
                         loggedIn?
                         <>
-                            <li><Link className="mr-4" to="/votes">Votes</Link></li>
+                            <li><Link className="mr-4" to="/vote">Votes</Link></li>
                         </>
                         :null
                     }

@@ -14,9 +14,8 @@ import About from "./pages/About";
 // Initialize Firebase Authentication and get a reference to the service
 const auth = getAuth(app);
 function App() {
-  let navigate = useNavigate();
+  // let navigate = useNavigate();
   const [loggedIn, setLoggedIn] = useState(false);
-  const [error, setError] = useState(null);
   onAuthStateChanged(auth, async(user) => {
       if (user){
         setLoggedIn(true);
@@ -32,8 +31,8 @@ function App() {
           <Route path="/" element={<Home loggedIn={loggedIn}/>} />
           <Route path="/signup" element={<SignUp loggedIn={loggedIn}/>} />
           <Route path="/login" element={<LogIn loggedIn={loggedIn} />} />
-          <Route path="/posts" element={<Post loggedIn={loggedIn} />} />
-          <Route path="/votes" element={<Vote loggedIn={loggedIn} />} />
+          <Route path="/post" element={<Post loggedIn={loggedIn} />} />
+          <Route path="/vote" element={<Vote loggedIn={loggedIn} />} />
           <Route path="/about" element={<About loggedIn={loggedIn} />} />
         </Routes>
       </div>
