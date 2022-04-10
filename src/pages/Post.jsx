@@ -7,14 +7,12 @@ import { INPUT_CLASS, BUTTON_CLASS } from "./classes";
 const Post = ({loggedIn}) => {
     let navigate = useNavigate();
     const [bigHeading, setBigHeading] = useState("");
-    const [smallHeading, setSmallHeading] = useState("");
     useEffect(()=>{
         if (!loggedIn) return navigate("/login");
     },[])
     const handlePost = async() => {
         saveDocument("post", {
             bigHeading,
-            smallHeading,
             upVotes:0,
             downVotes:0
         });
