@@ -9,7 +9,7 @@ const auth = getAuth(app);
 const Nav = ({loggedIn}) => {
     let navigate = useNavigate();
     return(
-        <div className="flex justify-between items-center px-6 py-6">
+        <div className="flex justify-between items-center px-6 py-6 text-md font-thin">
             <div className="flex justify-between items-center">
                 <Link to="/">
                     <div id="logo-container" className="transition-all hover:bg-gray-800 hover:text-gray-100 duration-300 ease-in-out flex justify-center items-center border border-black py-2 px-4">
@@ -17,7 +17,7 @@ const Nav = ({loggedIn}) => {
                     </div>
                 </Link>
                 <ul className="flex ml-16">
-                    <li><Link className="mr-4" to="/about">About</Link></li>
+                    <li className="hover:border-b"><Link className="mr-4" to="/about">About</Link></li>
                     {
                         loggedIn?
                         <>
@@ -36,7 +36,7 @@ const Nav = ({loggedIn}) => {
                     :
                 // Sign Out
                 <ul className="flex px-4">
-                    <li onClick={()=>signOut(auth).then(()=>navigate("/"))}><p>Sign Out</p></li>
+                    <li className="cursor-pointer" onClick={()=>signOut(auth).then(()=>navigate("/"))}><p>Sign Out</p></li>
                 </ul>
             }
         </div>

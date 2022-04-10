@@ -1,14 +1,13 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
-const About = () => {
-    return(
-        <div>
-            <div>
-                <p>Ranker for CSULB</p>
-                <p>Must login with CSULB email</p>
-            </div>
+
+export default function About() {
+  return (
+    <div>
+        <div className="text-4xl">
+            <h1>About</h1>
         </div>
-    )
+    </div>
+  );
 }
-
-export default About;

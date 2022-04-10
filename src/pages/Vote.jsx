@@ -7,25 +7,24 @@ import { getAuth } from "firebase/auth";
 import { toast } from "react-toastify";
 const auth = getAuth(app);
 
-const Card = ({postId, bigHeading, smallHeading, content, upVotes, downVotes, handleUp, handleDown, userUpVotes, userDownVotes}) => {
+const Card = ({postId, bigHeading, smallHeading, upVotes, downVotes, handleUp, handleDown, userUpVotes, userDownVotes}) => {
     const [upVoteCount, setUpVoteCount] = useState();
     const [downVoteCount, setDownVoteCount] = useState();
     const [isUpVoted, setIsUpVoted] = useState(false);
     const [isDownVoted, setIsDownVoted] = useState(false);
+    console.log(isDownVoted)
     useEffect(()=>{
         setUpVoteCount(upVotes);
         setDownVoteCount(downVotes);
+        console.log(userUpVotes, userDownVotes)
         if (userUpVotes.includes(postId))setIsUpVoted(true);
-        else if(userDownVotes.includes(postId))setIsDownVoted(true);
-    },[])
+        if(userDownVotes.includes(postId))setIsDownVoted(true);
+    },[userUpVotes, userDownVotes])
     return(
         <div className={`overflow-hidden ${CARD_CLASS}`}>
-            <div id="heading-container" className="border-r">
-                <h1 className="text-2xl font-semibold">{bigHeading}</h1>
+            <div id="heading-container" className="border-r overflow-scroll">
+                <h1 className="text-xl font-semibold">{bigHeading}</h1>
                 <h3 className="text-md font-thin">{smallHeading}</h3>
-                <div style={{overflow:"scroll"}} className="mt-3 text-xs break-words">
-                    <p className="" style={{overflow:"scroll"}}>{content}</p>
-                </div>
             </div>
             <div id="botton-container" className="border-l flex items-center justify-center">
                 <div id="up" className={`cursor-pointer hover:bg-green-400 ${isUpVoted ? "bg-green-400" : null} w-full h-full flex items-center justify-center`} onClick={()=>handleUp(postId, upVoteCount, downVoteCount, setUpVoteCount, setDownVoteCount)}>
@@ -60,8 +59,11 @@ const Vote = ({loggedIn}) => {
             const userData = await readDocument("user");
             userData.forEach(doc => {
                 if(auth.currentUser.uid === doc.data().uid){
-                    setUserUpVotes(doc.data().upVotes);
-                    setUserDownVotes(doc.data().downVotes);
+                    let d = doc.data();
+                    let tempArr1 = d.upVotes;
+                    let tempArr2 =  d.downVotes;
+                    setUserUpVotes(tempArr1);
+                    setUserDownVotes(tempArr2);
                     setDocUserId(doc.id)
                 }
             })
@@ -85,7 +87,7 @@ const Vote = ({loggedIn}) => {
     // 3. Find the correct user data
     // 4. If the post id is in user.votes
     
-    const handleUp = async(postId, upVotes, downVotes, setUpVoteCount, setDownVoteCount) => {
+    const handleUp = async(postId, upVotes, setUpVoteCount) => {
         let tempArr = [];
         if (userUpVotes.includes(postId) || userDownVotes.includes(postId)){
             return toast.error("You have already voted.")
@@ -98,7 +100,7 @@ const Vote = ({loggedIn}) => {
         setUpVoteCount(upVotes+1);
     
     }
-    const handleDown = async(postId, upVotes, downVotes, setUpVoteCount, setDownVoteCount) => {
+    const handleDown = async(postId, downVotes, setDownVoteCount) => {
         let tempArr;
         if (userDownVotes.includes(postId) || userUpVotes.includes(postId)){
             return toast.error("You have already voted.")
@@ -127,7 +129,7 @@ const Vote = ({loggedIn}) => {
                         handleUp={handleUp}
                         handleDown={handleDown}
                         userUpVotes={userUpVotes}
-                        userDownVotes={userUpVotes}/>
+                        userDownVotes={userDownVotes}/>
                 }):null
             }
         </div>
