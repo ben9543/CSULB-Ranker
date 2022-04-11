@@ -1,5 +1,7 @@
 # Ranker for CSULB
 
+- [Live Demo](https://master--csulb-ranker.netlify.app/)
+
 ## Rules
 
 - Email should be CSULB email
