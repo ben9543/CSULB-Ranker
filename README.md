@@ -1,6 +1,8 @@
 # Ranker for CSULB
 
 - [Live Demo](https://master--csulb-ranker.netlify.app/)
+- Example Username: example@student.csulb.edu
+- Example Password: 123456
 
 ## Rules
 
